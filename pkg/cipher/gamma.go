@@ -8,7 +8,6 @@ type GammaKey struct{}
 
 type gammaEncrypter struct {
 	key   []byte
-	Penis int
 }
 
 func (encrypter *gammaEncrypter) Encrypt(to_encrypt string) string {

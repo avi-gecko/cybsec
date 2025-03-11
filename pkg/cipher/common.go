@@ -10,7 +10,7 @@ type Encrypter interface {
 	Decrypt(string) string
 }
 
-func Create(key interface{}) (Encrypter, error) {
+func Create(key any) (Encrypter, error) {
 	switch key := key.(type) {
 	case TableRouteKey:
 		table := make([][]*string, key.Width)
@@ -21,9 +21,13 @@ func Create(key interface{}) (Encrypter, error) {
 		return tableRouteEncrypter{table: table, key: key}, nil
 
 	case GammaKey:
-		return &gammaEncrypter{Penis: 66}, nil
+		return &gammaEncrypter{}, nil
 	case ElGamalKey:
-		return elGamalEncrypter{}, nil
+		p := generatePrime()
+		g := findPrimitiveRoot(p, findPrimitives(p))
+		x := generateSecretKey(p)
+		y := modExp(g, x, p)
+		return &elGamalEncrypter{p: p, g: g, x: x, y: y}, nil
 	default:
 		return nil, errors.New("Key type: " + fmt.Sprint(key) + " doesn't exist")
 	}
